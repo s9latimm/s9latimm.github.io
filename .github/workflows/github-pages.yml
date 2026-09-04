@@ -41,12 +41,12 @@ jobs:
         shell: bash
         working-directory: .config/python
         run: |
-          python3 src/minimize.py ../../../portfolio/web/
+          python3 src/minimize.py --replace ../../../portfolio/web/
 
-      - name: Upload Artifact
+      - name: Upload Portfolio
         uses: actions/upload-artifact@v4
         with:
-          name: github-pages
+          name: portfolio
           retention-days: 1
           if-no-files-found: error
           overwrite: true
@@ -71,18 +71,18 @@ jobs:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download Master Artifact
+      - name: Download Portfolio
         uses: actions/download-artifact@v4
         with:
-          name: github-pages
+          name: portfolio
           path: .
 
-      - name: Upload Pages Artifact
+      - name: Upload Page
         uses: actions/upload-pages-artifact@v3
         with:
           retention-days: 1
           path: .
 
-      - name: Deploy to GitHub Pages
+      - name: Deploy Page
         id: deployment
         uses: actions/deploy-pages@v4
