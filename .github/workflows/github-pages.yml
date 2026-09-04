@@ -23,9 +23,9 @@ jobs:
 
       - name: Install Config
         shell: bash
-        working-directory: .
+        working-directory: .config/python
         run: |
-          python3 -m pip install -r .config/python/requirements.txt
+          python3 -m pip install -r requirements.txt
 
       - name: Checkout Portfolio
         uses: actions/checkout@v6
@@ -39,9 +39,9 @@ jobs:
 
       - name: Build Portfolio
         shell: bash
-        working-directory: .
+        working-directory: .config/python
         run: |
-          python3 .config/python/src/minimize.py portfolio/web/
+          python3 src/minimize.py ../../../portfolio/web/
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
