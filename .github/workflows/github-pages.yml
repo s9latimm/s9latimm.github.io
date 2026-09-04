@@ -41,7 +41,7 @@ jobs:
         shell: bash
         working-directory: .
         run: |
-          python3 .config/python/minimize.py portfolio/web/
+          python3 .config/python/src/minimize.py portfolio/web/
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
