@@ -11,38 +11,55 @@ jobs:
   build:
     runs-on: ubuntu-latest
     continue-on-error: false
-    strategy:
-      matrix:
-        ref: [ master ]
-        include:
-          - ref: master
-            path: .
     steps:
-      - name: Checkout
+      - name: Checkout Config
         uses: actions/checkout@v6
         with:
           fetch-depth: 1
-          ref: ${{ matrix.ref }}
-          path: ${{ matrix.path }}
+          repository: s9latimm/.dotfiles
+          ref: master
+          path: .config
           submodules: false
+
+      - name: Install Config
+        shell: bash
+        working-directory: .
+        run: |
+          python3 -m pip install -r .config/python/requirements.txt
+
+      - name: Checkout Portfolio
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 1
+          repository: s9latimm/portfolio
+          ref: master
+          path: portfolio
+          ssh-key: ${{ secrets.SSH_PORTFOLIO }}
+          submodules: false
+
+      - name: Build Portfolio
+        shell: bash
+        working-directory: .
+        run: |
+          python3 .config/python/minimize.py portfolio/web/
 
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
-          name: build-${{ matrix.ref }}
+          name: github-pages
           retention-days: 1
           if-no-files-found: error
           overwrite: true
           path: |
-            ${{ matrix.path }}/web/index.html
-            ${{ matrix.path }}/web/robots.txt
-            ${{ matrix.path }}/web/sitemap.xml
-            ${{ matrix.path }}/web/css/
-            ${{ matrix.path }}/web/js/
-            ${{ matrix.path }}/web/json/
-            ${{ matrix.path }}/web/files/
-            ${{ matrix.path }}/web/images/
-            ${{ matrix.path }}/web/fonts/
+            portfolio/web/index.html
+            portfolio/web/robots.txt
+            portfolio/web/sitemap.xml
+            portfolio/web/css/
+            portfolio/web/js/
+            portfolio/web/json/
+            portfolio/web/files/
+            portfolio/web/images/
+            portfolio/web/fonts/
 
   deploy:
     needs: build
@@ -57,7 +74,7 @@ jobs:
       - name: Download Master Artifact
         uses: actions/download-artifact@v4
         with:
-          name: build-master
+          name: github-pages
           path: .
 
       - name: Upload Pages Artifact
